@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>RK Bakery</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f6f6f6;
+margin:0;
+}
+
+header{
+background:#ff7f9c;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+
+.cake{
+background:white;
+margin:10px;
+padding:10px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+button{
+background:#25D366;
+border:none;
+color:white;
+padding:10px;
+border-radius:8px;
+margin-top:5px;
+}
+
+.install{
+background:#000;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+🍰 RK Bakery
+</header>
+
+<center>
+
+<br>
+
+<button onclick="installApp()" class="install">
+📱 Install App
+</button>
+
+<br><br>
+
+<button onclick="getLocation()">
+📍 Check Delivery
+</button>
+
+<br><br>
+
+<button onclick="orderWhatsApp()">
+📲 Order on WhatsApp
+</button>
+
+<br><br>
+
+<button onclick="payUPI()">
+💳 Pay with UPI
+</button>
+
+</center>
+
+<h3 style="padding-left:10px">Cake Menu</h3>
+
+<div id="cakes"></div>
+
+<script>
+
+const cakes=[
+
+{name:"Chocolate Cake",price:300},
+{name:"Black Forest",price:240},
+{name:"Strawberry Cake",price:350},
+{name:"Vanilla Cake",price:240},
+{name:"Pineapple Cake",price:260},
+{name:"Kitkat Cake",price:400},
+{name:"Butterscotch Cake",price:280},
+{name:"Red Velvet Cake",price:450},
+{name:"Oreo Cake",price:350},
+{name:"Fruit Cake",price:300}
+
+]
+
+let cart=[]
+
+function loadCakes(){
+
+let html=""
+
+cakes.forEach((cake,i)=>{
+
+html+=`
+<div class="cake">
+
+<h4>${cake.name}</h4>
+
+₹ ${cake.price}
+
+<br>
+
+<button onclick="addCart(${i})">
+
+Add to Cart
+
+</button>
+
+</div>
+`
+
+})
+
+document.getElementById("cakes").innerHTML=html
+
+}
+
+loadCakes()
+
+function addCart(i){
+
+cart.push(cakes[i])
+
+alert("Added to cart")
+
+}
+
+function orderWhatsApp(){
+
+let msg="Cake Order:%0A"
+
+cart.forEach(c=>{
+
+msg+=c.name+" ₹"+c.price+"%0A"
+
+})
+
+window.open("https://wa.me/91XXXXXXXXXX?text="+msg)
+
+}
+
+function payUPI(){
+
+window.open("upi://pay?pa=yourupi@upi&pn=RK Bakery")
+
+}
+
+function installApp(){
+
+alert("Open this site in Chrome menu → Add to Home Screen")
+
+}
+
+const shopLat=26.8818326
+const shopLng=75.2389793
+
+function getLocation(){
+
+navigator.geolocation.getCurrentPosition(showPosition)
+
+}
+
+function showPosition(position){
+
+let userLat=position.coords.latitude
+let userLng=position.coords.longitude
+
+let distance=calcDistance(userLat,userLng)
+
+if(distance<=50){
+
+alert("Delivery Available")
+
+}else{
+
+alert("Delivery not available")
+
+}
+
+}
+
+function calcDistance(lat2,lng2){
+
+let R=6371
+
+let dLat=(lat2-shopLat)*Math.PI/180
+
+let dLng=(lng2-shopLng)*Math.PI/180
+
+let a=
+
+Math.sin(dLat/2)*Math.sin(dLat/2)+
+
+Math.cos(shopLat*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+
+Math.sin(dLng/2)*Math.sin(dLng/2)
+
+let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+
+return R*c
+
+}
+
+</script>
+
+</body>
+</html>
