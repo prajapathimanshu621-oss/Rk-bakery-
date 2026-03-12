@@ -10,7 +10,7 @@
 
 body{
 font-family:Arial;
-background:#f6f6f6;
+background:#f5f5f5;
 margin:0;
 }
 
@@ -22,25 +22,37 @@ text-align:center;
 font-size:22px;
 }
 
+button{
+border:none;
+padding:10px;
+border-radius:8px;
+margin:5px;
+color:white;
+cursor:pointer;
+}
+
+.install{background:black}
+.whatsapp{background:#25D366}
+.cartbtn{background:#ff7f9c}
+.pay{background:#673ab7}
+
 .cake{
 background:white;
 margin:10px;
-padding:10px;
+padding:12px;
 border-radius:10px;
 box-shadow:0 2px 5px rgba(0,0,0,0.2);
 }
 
-button{
-background:#25D366;
-border:none;
-color:white;
+#cartBox{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
 padding:10px;
-border-radius:8px;
-margin-top:5px;
-}
-
-.install{
-background:#000;
+box-shadow:0 -2px 5px rgba(0,0,0,0.2);
+display:none;
 }
 
 </style>
@@ -50,34 +62,29 @@ background:#000;
 <body>
 
 <header>
-🍰 RK Bakery
+
+🍰 RK Bakery  
+📍 Phulera Rajasthan
+
 </header>
 
 <center>
 
 <br>
 
-<button onclick="installApp()" class="install">
-📱 Install App
-</button>
+<button class="install" onclick="installApp()">📱 Install App</button>
+
+<button class="whatsapp" onclick="orderWhatsApp()">📲 WhatsApp Order</button>
+
+<button class="cartbtn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
+
+<button class="pay" onclick="payUPI()">💳 Pay UPI</button>
 
 <br><br>
 
-<button onclick="getLocation()">
-📍 Check Delivery
-</button>
+<button onclick="getLocation()">📍 Check Delivery (50KM)</button>
 
-<br><br>
-
-<button onclick="orderWhatsApp()">
-📲 Order on WhatsApp
-</button>
-
-<br><br>
-
-<button onclick="payUPI()">
-💳 Pay with UPI
-</button>
+<button onclick="directions()">🗺 Directions</button>
 
 </center>
 
@@ -85,12 +92,22 @@ background:#000;
 
 <div id="cakes"></div>
 
+<div id="cartBox">
+
+<h3>Cart</h3>
+
+<div id="cartItems"></div>
+
+<button onclick="orderWhatsApp()" class="whatsapp">Order Now</button>
+
+</div>
+
 <script>
 
 const cakes=[
 
-{name:"Chocolate Cake",price:240},
-{name:"Black Forest",price:200},
+{name:"Chocolate Cake",price:350},
+{name:"Black Forest Cake",price:200},
 {name:"Strawberry Cake",price:200},
 {name:"Vanilla Cake",price:200},
 {name:"Pineapple Cake",price:200},
@@ -98,7 +115,49 @@ const cakes=[
 {name:"Butterscotch Cake",price:200},
 {name:"Red Velvet Cake",price:250},
 {name:"Oreo Cake",price:350},
-{name:"Fruit Cake",price:350}
+{name:"Fruit Cake",price:350},
+
+{name:"Pastry Chocolate",price:80},
+{name:"Pastry Strawberry",price:90},
+{name:"Pastry Pineapple",price:85},
+{name:"Pastry Butterscotch",price:20},
+{name:"Pastry Vanilla",price:20},
+
+{name:"Designer Cake 1",price:500},
+{name:"Designer Cake 2",price:550},
+{name:"Designer Cake 3",price:600},
+{name:"Designer Cake 4",price:650},
+{name:"Designer Cake 5",price:700},
+
+{name:"Birthday Cake",price:450},
+{name:"Anniversary Cake",price:480},
+{name:"Kids Cake",price:420},
+{name:"Photo Cake",price:700},
+{name:"Heart Cake",price:500},
+
+{name:"Chocolate Truffle",price:350},
+{name:"Choco Chip Cake",price:320},
+{name:"Coffee Cake",price:330},
+{name:"Caramel Cake",price:340},
+{name:"Nutella Cake",price:500},
+
+{name:"Mini Cake",price:150},
+{name:"Cup Cake",price:60},
+{name:"Cup Cake Chocolate",price:65},
+{name:"Cup Cake Vanilla",price:60},
+{name:"Cup Cake Strawberry",price:65},
+
+{name:"Premium Cake 1",price:700},
+{name:"Premium Cake 2",price:750},
+{name:"Premium Cake 3",price:800},
+{name:"Premium Cake 4",price:850},
+{name:"Premium Cake 5",price:900},
+
+{name:"Special Cake 1",price:400},
+{name:"Special Cake 2",price:420},
+{name:"Special Cake 3",price:430},
+{name:"Special Cake 4",price:450},
+{name:"Special Cake 5",price:480}
 
 ]
 
@@ -111,6 +170,7 @@ let html=""
 cakes.forEach((cake,i)=>{
 
 html+=`
+
 <div class="cake">
 
 <h4>${cake.name}</h4>
@@ -119,13 +179,14 @@ html+=`
 
 <br>
 
-<button onclick="addCart(${i})">
+<button onclick="addCart(${i})" class="cartbtn">
 
 Add to Cart
 
 </button>
 
 </div>
+
 `
 
 })
@@ -140,13 +201,37 @@ function addCart(i){
 
 cart.push(cakes[i])
 
-alert("Added to cart")
+document.getElementById("cartCount").innerText=cart.length
+
+updateCart()
+
+}
+
+function updateCart(){
+
+let html=""
+
+cart.forEach(c=>{
+
+html+=c.name+" ₹"+c.price+"<br>"
+
+})
+
+document.getElementById("cartItems").innerHTML=html
+
+}
+
+function toggleCart(){
+
+let box=document.getElementById("cartBox")
+
+box.style.display=box.style.display=="block"?"none":"block"
 
 }
 
 function orderWhatsApp(){
 
-let msg="Cake Order:%0A"
+let msg="RK Bakery Order:%0A"
 
 cart.forEach(c=>{
 
@@ -166,7 +251,13 @@ window.open("upi://pay?pa=Q349371191@ybl&pn=RK Bakery")
 
 function installApp(){
 
-alert("Open this site in Chrome menu → Add to Home Screen")
+alert("Open Chrome menu → Add to Home Screen")
+
+}
+
+function directions(){
+
+window.open("https://maps.google.com/?q=26.8818326,75.2389793")
 
 }
 
@@ -192,7 +283,7 @@ alert("Delivery Available")
 
 }else{
 
-alert("Delivery not available")
+alert("Delivery Not Available")
 
 }
 
@@ -203,15 +294,13 @@ function calcDistance(lat2,lng2){
 let R=6371
 
 let dLat=(lat2-shopLat)*Math.PI/180
-
 let dLng=(lng2-shopLng)*Math.PI/180
 
 let a=
 
 Math.sin(dLat/2)*Math.sin(dLat/2)+
-
-Math.cos(shopLat*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
-
+Math.cos(shopLat*Math.PI/180)*
+Math.cos(lat2*Math.PI/180)*
 Math.sin(dLng/2)*Math.sin(dLng/2)
 
 let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
