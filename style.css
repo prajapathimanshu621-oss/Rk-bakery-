@@ -29,3 +29,21 @@ border:none;
 padding:10px;
 margin-top:5px;
 }
+.instagram-box{
+
+margin:20px;
+text-align:center;
+
+}
+
+.instagram-box button{
+
+background:#E1306C;
+color:white;
+border:none;
+padding:12px 20px;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+
+}
